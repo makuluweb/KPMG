@@ -691,7 +691,8 @@
 
     <div class="sb-section">
       <button class="btn ai" id="draftAll" style="width: 100%; justify-content: center; padding: 12px;">⚡ Draft entire form with AI</button>
-      <p class="sb-hint" style="margin-top: 8px; text-align: center;">Or use the per-section AI buttons →</p>
+      <button class="btn ai" id="refineAll" style="width: 100%; justify-content: center; padding: 10px; margin-top: 8px; background: white; color: var(--ai); border: 1px solid var(--ai);">✦ Refine all — de-dupe &amp; tighten</button>
+      <p class="sb-hint" style="margin-top: 8px; text-align: center;">Refine reads all drafted sections together and rewrites them as a coherent two-page document.</p>
     </div>
   </aside>
 
@@ -1489,6 +1490,143 @@ NEVER:
     btn.disabled = false;
     btn.textContent = orig;
     toast(`Drafted ${SECTIONS.length} sections. Review and refine.`, 'success');
+  });
+
+  // ===== Refine all — single coherence pass over all drafted sections =====
+  const REFINE_SYSTEM_PROMPT = `You are an expert advisor refining a KPMG Australia Partner's FY26 Year-End Performance Summary Form. The form has already been drafted section by section, but because each section was written independently, evidence repeats across sections.
+
+YOUR JOB: Rewrite all sections as a single coherent two-page document where:
+- Each unique piece of evidence appears in ONE primary "home" section, with at most one passing reference elsewhere.
+- Each section retains a distinct angle and adds something new — no section is just a restatement of another.
+- Total narrative length stays under ~1000 words across all sections so the full form fits two pages.
+- Partner-grade tone is preserved: "Led", "Delivered", "Architected", "Mentored". Lead with quantified outcomes.
+- Bullet points are tight (≤25 words each). No filler, no AI clichés ("delve", "leverage" as a verb, "synergies"), no marketing prose.
+- KPMG values mapping (Integrity, Excellence, Courage, Together, For Better) stays in the People section, not scattered.
+- KPMG purpose ("Inspire confidence, empower change") stays in the Purpose section.
+- All hard financial numbers (revenue vs budget, sales, gross margin, % var, YoY by BG) consolidate in the Consulting section — that is their primary home.
+- BHP Platinum / $50M trajectory framing primary home: Industries section. Light reference allowed in FY26 Performance Summary.
+- AI revenue vector / $2.5M Mining engagement primary home: Industries section.
+- Personal AI tool usage (Workbench, CoPilot etc.) primary home: Personal Development section.
+- "$30M+ enabled / 2x multiplier" primary home: FY26 Performance Summary.
+- "250+ staff across four service lines" primary home: Industries section.
+- Mentoring 15+ partners primary home: People section.
+
+OUTPUT FORMAT:
+You must output a JSON object with keys matching the section IDs provided. Each value is the refined section text. Output ONLY the JSON object, no preamble, no markdown fences, no commentary. The structure must be:
+
+{
+  "rating": "...",
+  "fy26Perf": "...",
+  "purpose": "...",
+  "consulting": "...",
+  "clients": "...",
+  "people": "...",
+  "industries": "...",
+  "practice": "...",
+  "devAI": "...",
+  "strengths": "...",
+  "other": "..."
+}
+
+If a section in the input is empty, leave the corresponding value as an empty string. Preserve markdown bullets (- and **bold**) inside the values — these will render as plain text but the structure is intentional.`;
+
+  document.getElementById('refineAll').addEventListener('click', async () => {
+    const apiKey = localStorage.getItem(KEY_STORAGE);
+    if (!apiKey) { toast('Save your API key first', 'error'); return; }
+
+    // Gather current drafts
+    const currentDrafts = {};
+    let nonEmptyCount = 0;
+    SECTIONS.forEach(s => {
+      const ta = document.getElementById('sec_' + s.id);
+      const val = ta ? ta.value.trim() : '';
+      currentDrafts[s.id] = val;
+      if (val) nonEmptyCount++;
+    });
+
+    if (nonEmptyCount < 3) {
+      toast('Draft at least 3 sections first (use "Draft entire form" or per-section buttons).', 'error');
+      return;
+    }
+
+    if (!confirm(`Refine ${nonEmptyCount} drafted sections in a single coherence pass? This will REPLACE the current section text. Recommended: click "Backup JSON" first.`)) return;
+
+    const btn = document.getElementById('refineAll');
+    const orig = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '✦ Refining (one moment)...';
+
+    // Build the user prompt — give Claude the context + all current drafts + section titles
+    const sectionBlock = SECTIONS.map(s => {
+      const draft = currentDrafts[s.id] || '(empty — leave blank in output)';
+      return `### Section ID: ${s.id}\nTitle: ${s.title}\nCurrent draft:\n${draft}`;
+    }).join('\n\n---\n\n');
+
+    const context = buildContextBlock();
+    const userPrompt = `${context}\n\n=========================================================\nCURRENT DRAFTS TO REFINE:\n=========================================================\n\n${sectionBlock}\n\n=========================================================\nNow rewrite all sections as a coherent two-page document per the rules. Output the JSON object only.`;
+
+    try {
+      const { text } = await callAnthropic({
+        label: 'Refine all (coherence pass)',
+        systemPrompt: REFINE_SYSTEM_PROMPT,
+        userPrompt,
+        maxTokens: 4000
+      });
+
+      // Parse JSON — be tolerant of leading/trailing whitespace or code fences
+      let cleaned = text.trim()
+        .replace(/^```(?:json)?\s*/i, '')
+        .replace(/\s*```\s*$/, '')
+        .trim();
+      // Find first { and last } to be safe
+      const firstBrace = cleaned.indexOf('{');
+      const lastBrace = cleaned.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        cleaned = cleaned.slice(firstBrace, lastBrace + 1);
+      }
+
+      let parsed;
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch (e) {
+        console.error('[refineAll] JSON parse failed:', e, '\nText was:', text);
+        toast('AI returned non-JSON output. Check debug panel — original drafts preserved.', 'error');
+        return;
+      }
+
+      // Apply the refined values
+      let applied = 0;
+      SECTIONS.forEach(s => {
+        if (parsed[s.id] !== undefined && parsed[s.id] !== null) {
+          const ta = document.getElementById('sec_' + s.id);
+          if (!ta) return;
+          const newVal = String(parsed[s.id]).trim();
+          ta.value = newVal;
+          if (newVal) {
+            ta.classList.add('has-ai');
+            applied++;
+          }
+          // Update the rating reasoning block too
+          if (s.id === 'rating' && newVal) {
+            const body = document.getElementById('reasonBody_rating');
+            const wrap = document.getElementById('reason_rating');
+            if (body) body.textContent = newVal;
+            if (wrap) wrap.classList.add('show');
+          }
+        }
+      });
+
+      updateAllCounts();
+      saveState();
+      toast(`Refined ${applied} sections. Review the consolidated draft.`, 'success');
+    } catch (e) {
+      console.error('[refineAll] error:', e);
+      const userMsg = e.userMessage || e.message || 'Unknown error';
+      toast('Refine failed — ' + userMsg + ' · Check Debug panel. Original drafts preserved.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = orig;
+    }
   });
 
   // ===== Save / Clear / Print =====
