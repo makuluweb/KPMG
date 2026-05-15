@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPMG FY26 Partner YE Performance Summary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+  :root {
+    --kpmg-navy: #00338D;
+    --kpmg-navy-dark: #001E5A;
+    --kpmg-blue: #0091DA;
+    --kpmg-light: #EAF3FB;
+    --kpmg-violet: #483698;
+    --kpmg-pink: #BC204B;
+    --kpmg-purple: #6D2077;
+    --ink: #1A1A1A;
+    --ink-soft: #4A4A4A;
+    --ink-muted: #8A8A8A;
+    --paper: #F7F6F1;
+    --paper-warm: #F0EDE3;
+    --line: #D9D6CC;
+    --line-strong: #B8B5A8;
+    --ok: #2D7D46;
+    --warn: #B8860B;
+    --err: #C0392B;
+    --ai: #6D2077;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ===== App shell ===== */
+  .app {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    min-height: 100vh;
+  }
+  @media (max-width: 1100px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid var(--line); }
+  }
+
+  /* ===== Sidebar (context + AI) ===== */
+  .sidebar {
+    background: white;
+    border-right: 1px solid var(--line);
+    padding: 28px 28px 40px;
+    overflow-y: auto;
+    max-height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .brand-mark {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: -1px;
+    color: var(--kpmg-navy);
+    line-height: 1;
+  }
+  .brand-mark::after {
+    content: '';
+    display: inline-block;
+    width: 7px; height: 7px;
+    background: var(--kpmg-blue);
+    margin-left: 5px;
+    transform: translateY(-4px);
+  }
+  .brand-sub {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--ink-muted);
+    font-weight: 500;
+  }
+  .sb-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    margin: 18px 0 4px;
+    line-height: 1.15;
+  }
+  .sb-title em { font-style: italic; color: var(--kpmg-navy); }
+  .sb-lede {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+    line-height: 1.55;
+  }
+
+  .sb-section { margin-bottom: 24px; }
+  .sb-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    color: var(--kpmg-navy);
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sb-label::before {
+    content: '';
+    width: 3px;
+    height: 12px;
+    background: var(--kpmg-navy);
+  }
+  .sb-hint {
+    font-size: 11.5px;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  textarea, input[type="text"], input[type="password"], select {
+    width: 100%;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    padding: 9px 11px;
+    border: 1px solid var(--line-strong);
+    background: white;
+    border-radius: 2px;
+    color: var(--ink);
+    transition: border 0.15s, box-shadow 0.15s;
+    resize: vertical;
+  }
+  textarea { min-height: 70px; line-height: 1.5; }
+  textarea:focus, input:focus, select:focus {
+    outline: none;
+    border-color: var(--kpmg-navy);
+    box-shadow: 0 0 0 3px rgba(0,51,141,0.1);
+  }
+  input[type="password"], input[type="text"].mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+
+  .key-row {
+    display: flex;
+    gap: 6px;
+  }
+  .key-row input { flex: 1; }
+  .key-row button {
+    padding: 0 12px;
+    background: white;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .key-row button:hover { border-color: var(--kpmg-navy); color: var(--kpmg-navy); }
+  .key-status {
+    font-size: 11px;
+    margin-top: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .key-status.ok { color: var(--ok); }
+  .key-status.miss { color: var(--ink-muted); }
+
+  /* ===== Main pane ===== */
+  .main {
+    padding: 32px 40px 80px;
+    max-width: 1100px;
+  }
+  .main-header {
+    border-top: 6px solid var(--kpmg-navy);
+    padding-top: 18px;
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .main-title {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 500;
+    letter-spacing: -0.6px;
+    line-height: 1.1;
+  }
+  .main-title-sub {
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-style: italic;
+    margin-top: 4px;
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 9px 14px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--kpmg-navy);
+    background: var(--kpmg-navy);
+    color: white;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover:not(:disabled) { background: var(--kpmg-navy-dark); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn.secondary { background: white; color: var(--kpmg-navy); }
+  .btn.secondary:hover:not(:disabled) { background: var(--kpmg-light); }
+  .btn.ai {
+    background: var(--ai);
+    border-color: var(--ai);
+    color: white;
+  }
+  .btn.ai:hover:not(:disabled) {
+    background: #58195F;
+  }
+  .btn.ai-small {
+    padding: 5px 10px;
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    background: white;
+    border: 1px solid var(--ai);
+    color: var(--ai);
+  }
+  .btn.ai-small:hover:not(:disabled) { background: var(--ai); color: white; }
+  .btn.ghost {
+    background: none;
+    border-color: var(--line-strong);
+    color: var(--ink-soft);
+  }
+  .btn.ghost:hover { border-color: var(--ink-soft); color: var(--ink); }
+
+  /* Budget meter */
+  .budget {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    margin-bottom: 24px;
+    font-size: 12px;
+  }
+  .budget-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--paper-warm);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+  .budget-fill {
+    height: 100%;
+    background: var(--ok);
+    width: 0%;
+    transition: width 0.3s ease, background 0.3s ease;
+  }
+  .budget-fill.warn { background: var(--warn); }
+  .budget-fill.over { background: var(--err); }
+  .budget-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    min-width: 100px;
+    text-align: right;
+  }
+
+  /* Form layout */
+  .top-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 40px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+  }
+  @media (max-width: 700px) {
+    .top-grid { grid-template-columns: 1fr; }
+  }
+  .top-grid .pair-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    grid-column: 1 / -1;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .field label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  .section {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.2px;
+    line-height: 1.25;
+  }
+  .section-hint {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 3px;
+    font-style: italic;
+    line-height: 1.45;
+  }
+  .section-title-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--kpmg-blue);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .section-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+    text-align: right;
+    min-width: 110px;
+  }
+  .section-meta .wc { color: var(--ink-soft); font-weight: 500; }
+
+  textarea.narrative {
+    min-height: 100px;
+  }
+  textarea.narrative.has-ai {
+    border-left: 3px solid var(--ai);
+    padding-left: 12px;
+  }
+
+  .ai-reasoning {
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: rgba(109, 32, 119, 0.06);
+    border-left: 2px solid var(--ai);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    display: none;
+  }
+  .ai-reasoning.show { display: block; }
+  .ai-reasoning-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--ai);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .draft-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+  }
+  .draft-status.thinking {
+    color: var(--ai);
+  }
+  .spinner {
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid var(--ai);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translate(-50%, 20px);
+    background: var(--ink);
+    color: white;
+    padding: 12px 20px;
+    font-size: 13px;
+    border-radius: 2px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 200;
+    max-width: 480px;
+    text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; cursor: pointer; }
+  .toast.success { background: var(--ok); }
+  .toast.error { background: var(--err); }
+  .toast .dismiss-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    opacity: 0.75;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ===== Debug panel ===== */
+  .debug-fab {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    background: #0E1116;
+    color: #C9D1D9;
+    border: 1px solid #30363D;
+    padding: 8px 12px;
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    z-index: 140;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .debug-fab:hover { background: #161B22; }
+  .debug-fab .badge {
+    background: var(--err);
+    color: white;
+    padding: 1px 5px;
+    border-radius: 8px;
+    font-size: 9px;
+    min-width: 14px;
+    text-align: center;
+  }
+  .debug-fab .badge.hidden { display: none; }
+  .debug-panel {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    width: 520px;
+    max-width: calc(100vw - 32px);
+    max-height: 65vh;
+    background: #0E1116;
+    color: #C9D1D9;
+    border: 1px solid #30363D;
+    border-radius: 4px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+    z-index: 150;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    display: none;
+    flex-direction: column;
+  }
+  .debug-panel.show { display: flex; }
+  .debug-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid #30363D;
+    background: #161B22;
+  }
+  .debug-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #8B949E;
+    font-weight: 600;
+  }
+  .debug-actions { display: flex; gap: 6px; }
+  .debug-actions button {
+    background: transparent;
+    color: #8B949E;
+    border: 1px solid #30363D;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .debug-actions button:hover { color: white; border-color: #8B949E; }
+  .debug-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 12px;
+  }
+  .debug-body::-webkit-scrollbar { width: 8px; }
+  .debug-body::-webkit-scrollbar-track { background: #0E1116; }
+  .debug-body::-webkit-scrollbar-thumb { background: #30363D; border-radius: 4px; }
+  .debug-entry {
+    padding: 8px 0;
+    border-bottom: 1px dashed #21262D;
+  }
+  .debug-entry:last-child { border-bottom: none; }
+  .debug-entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .debug-entry-status {
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-size: 10px;
+  }
+  .debug-entry-status.ok { background: #1A4D2E; color: #7EE787; }
+  .debug-entry-status.err { background: #5A1818; color: #FFA198; }
+  .debug-entry-status.pending { background: #2D3748; color: #79C0FF; }
+  .debug-entry-meta { color: #6E7681; font-size: 10px; }
+  .debug-entry-section { color: #FFA657; font-size: 10px; }
+  .debug-entry-detail {
+    color: #8B949E;
+    margin-top: 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.45;
+    font-size: 10.5px;
+    max-height: 260px;
+    overflow-y: auto;
+    padding: 6px 8px;
+    background: #161B22;
+    border-radius: 2px;
+    display: none;
+  }
+  .debug-entry.expanded .debug-entry-detail { display: block; }
+  .debug-entry-toggle {
+    cursor: pointer;
+    user-select: none;
+    color: #58A6FF;
+    font-size: 10px;
+  }
+  .debug-entry-toggle:hover { text-decoration: underline; }
+  .debug-empty {
+    color: #6E7681;
+    text-align: center;
+    padding: 24px 0;
+    font-style: italic;
+    font-size: 11px;
+  }
+
+  /* Test button */
+  .test-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px;
+    background: white;
+    border: 1px solid var(--line-strong);
+    color: var(--ink-soft);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-weight: 600;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .test-btn:hover { border-color: var(--kpmg-navy); color: var(--kpmg-navy); }
+  .test-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .test-result {
+    margin-top: 6px;
+    padding: 6px 8px;
+    font-size: 10.5px;
+    font-family: 'IBM Plex Mono', monospace;
+    border-radius: 2px;
+    display: none;
+    line-height: 1.5;
+  }
+  .test-result.show { display: block; }
+  .test-result.ok { background: rgba(45, 125, 70, 0.08); color: var(--ok); border-left: 2px solid var(--ok); }
+  .test-result.err { background: rgba(192, 57, 43, 0.08); color: var(--err); border-left: 2px solid var(--err); }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1.7;
+  }
+
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ====== SIDEBAR ====== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">KPMG</div>
+      <div class="brand-sub">FY26 · YE Summary<br>AI Draft Studio</div>
+    </div>
+
+    <h2 class="sb-title">Drop the <em>evidence</em>, get a draft.</h2>
+    <p class="sb-lede">Paste your raw notes, scorecard pulls, deal log, PPF feedback, and Power BI numbers below. Claude turns them into the structured two-page YE summary on the right — section by section, or all in one pass.</p>
+
+    <div class="sb-section">
+      <div class="sb-label">API Connection</div>
+      <p class="sb-hint">Your Anthropic API key. Stored only in this browser's localStorage. Calls go direct to api.anthropic.com from your machine.</p>
+      <div class="key-row">
+        <input type="password" id="apiKey" placeholder="sk-ant-api03-..." autocomplete="off">
+        <button id="toggleKey" title="Show/hide">👁</button>
+        <button id="saveKey" title="Save key">Save</button>
+      </div>
+      <div class="key-status miss" id="keyStatus">No key saved</div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-label">Model</div>
+      <select id="modelSelect">
+        <option value="claude-opus-4-7" selected>Claude Opus 4.7 (highest quality)</option>
+        <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (faster, cheaper)</option>
+      </select>
+      <button class="test-btn" id="btnTestConnection">⚡ Test connection</button>
+      <div class="test-result" id="testResult"></div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-label">Context · Achievements &amp; evidence</div>
+      <p class="sb-hint">The more specific the better. Deal wins with $ value, client outcomes, PPF themes, sector commentary, team moves, IP created.</p>
+      <textarea id="ctxAchievements" placeholder="e.g.&#10;• Led BHP MinAus AI adoption strategy — $4.2M engagement, NPS 9/10&#10;• Closed Rio Tinto data platform mandate ($1.8M, 60% margin)&#10;• Authored 'Everyday AI' framework, used by 12 partners&#10;• PPF themes: clarity of communication, brings energy, develops people&#10;• Mentored 4 SMs through promotion&#10;• Sector revenue 112% of bud, BL margin 28% (bud 25%)" style="min-height: 180px;"></textarea>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-label">Context · Goals &amp; INC reminder</div>
+      <p class="sb-hint">What were your individual goals (INC) for FY26? Paste them in for the AI to map delivery against.</p>
+      <textarea id="ctxGoals" placeholder="e.g.&#10;• Grow ENR sector revenue to $X by end FY26&#10;• Lead AI adoption strategy for top 3 mining clients&#10;• Develop two SMs to D level&#10;• Author and publish ENR-AI POV..." style="min-height: 100px;"></textarea>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-label">Context · Areas worked on / development</div>
+      <p class="sb-hint">Self-awareness goes a long way in a verbal summary. What did you actively work on this year?</p>
+      <textarea id="ctxDev" placeholder="e.g.&#10;• Delegating more rather than carrying delivery myself&#10;• Saying no to opportunities outside ENR sector&#10;• Spending more structured time on team coaching" style="min-height: 80px;"></textarea>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-label">Context · Tone &amp; positioning</div>
+      <p class="sb-hint">Anything else — risk appetite around the rating ask, relationship dynamic with your PDM, anything political.</p>
+      <textarea id="ctxTone" placeholder="e.g.&#10;• Pushing for SP from S — confidence on revenue + new IP&#10;• PDM tends to discount intangible contributions, lean hard on numbers&#10;• Promotion ask: from Director to Partner is FY27 conversation, not this one" style="min-height: 80px;"></textarea>
+    </div>
+
+    <div class="sb-section">
+      <button class="btn ai" id="draftAll" style="width: 100%; justify-content: center; padding: 12px;">⚡ Draft entire form with AI</button>
+      <p class="sb-hint" style="margin-top: 8px; text-align: center;">Or use the per-section AI buttons →</p>
+    </div>
+  </aside>
+
+  <!-- ====== MAIN ====== -->
+  <main class="main">
+
+    <div class="main-header">
+      <div>
+        <div class="main-title">FY26 Partner YE Performance Summary</div>
+        <div class="main-title-sub">Please limit to two pages as these notes will be used for a verbal summary of performance</div>
+      </div>
+      <div class="actions">
+        <button class="btn secondary" id="btnSave">Save</button>
+        <button class="btn secondary" id="btnExportWord">Export Word</button>
+        <button class="btn secondary" id="btnExportJson">Backup JSON</button>
+        <button class="btn secondary" id="btnImportJson">Restore JSON</button>
+        <button class="btn ghost" id="btnClear">Clear</button>
+        <input type="file" id="jsonFileInput" accept=".json,application/json" style="display:none;">
+      </div>
+    </div>
+
+    <div class="budget">
+      <div class="budget-bar"><div class="budget-fill" id="budgetFill"></div></div>
+      <div class="budget-count" id="budgetCount">0 / 1200 words</div>
+    </div>
+
+    <!-- Header strip -->
+    <div class="top-grid">
+      <div class="field">
+        <label>Name</label>
+        <input type="text" id="f_name" placeholder="Type here">
+      </div>
+      <div class="field">
+        <label>PDM</label>
+        <input type="text" id="f_pdm" placeholder="Type here">
+      </div>
+      <div class="pair-3">
+        <div class="field">
+          <label>Current Band</label>
+          <input type="text" id="f_currentBand" placeholder="e.g. D">
+        </div>
+        <div class="field">
+          <label>Proposed Rating</label>
+          <input type="text" id="f_propRating" placeholder="e.g. SP / S / M">
+        </div>
+        <div class="field">
+          <label>Proposed Band</label>
+          <input type="text" id="f_propBand" placeholder="e.g. D / SD / Partner">
+        </div>
+      </div>
+      <div class="field">
+        <label>Roles (and % of time spent)</label>
+        <textarea id="f_roles" placeholder="e.g. Lead Partner ENR (60%) · AI Adoption Lead (25%) · BHP Account (15%)" style="min-height: 70px;"></textarea>
+      </div>
+      <div class="field">
+        <label>Ptnr Feedback summary</label>
+        <textarea id="f_ptnrFeedback" placeholder="Summary themes from partner feedback" style="min-height: 70px;"></textarea>
+      </div>
+      <div class="field">
+        <label># Responses</label>
+        <input type="text" id="f_responses" placeholder="e.g. 8">
+      </div>
+      <div class="field">
+        <label>Industry &amp; Sector Alignment</label>
+        <input type="text" id="f_industry" placeholder="e.g. ENR · Mining">
+      </div>
+      <div class="field">
+        <label>BG &amp; Business Line</label>
+        <input type="text" id="f_bg" placeholder="e.g. Advisory · M&amp;C">
+      </div>
+      <div class="field">
+        <label>Industry Rev v Bud ($ and % var)</label>
+        <input type="text" id="f_indRev" placeholder="e.g. $X.XXm / +12%">
+      </div>
+      <div class="field">
+        <label>BG DC v Bud ($ &amp; % var)</label>
+        <input type="text" id="f_bgDc" placeholder="e.g. $X.XXm / +8%">
+      </div>
+      <div class="field">
+        <label>Sector Rev v Bud ($ and % var)</label>
+        <input type="text" id="f_secRev" placeholder="e.g. $X.XXm / +15%">
+      </div>
+      <div class="field">
+        <label>BL DC v Bud ($ &amp; % var)</label>
+        <input type="text" id="f_blDc" placeholder="e.g. $X.XXm / +6%">
+      </div>
+    </div>
+
+    <!-- Narrative sections (generated below by JS) -->
+    <div id="narrativeSections"></div>
+
+    <div class="doc-footer">
+      <strong>CONFIDENTIAL</strong> — KPMG FY26 Partner Year-End Performance Summary · Draft assisted by AI · Verbal summary basis · Two-page limit
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Debug FAB & panel -->
+<button class="debug-fab" id="debugFab">
+  <span>⚙ DEBUG</span>
+  <span class="badge hidden" id="debugBadge">0</span>
+</button>
+<div class="debug-panel" id="debugPanel">
+  <div class="debug-header">
+    <div class="debug-title">AI call log</div>
+    <div class="debug-actions">
+      <button id="debugCopyAll">Copy all</button>
+      <button id="debugClear">Clear</button>
+      <button id="debugClose">×</button>
+    </div>
+  </div>
+  <div class="debug-body" id="debugBody">
+    <div class="debug-empty">No API calls yet. Click "Test connection" or generate a section to see request/response details here.</div>
+  </div>
+</div>
+
+<script>
+  // ===== Configuration =====
+  const SECTIONS = [
+    {
+      id: 'rating',
+      title: 'Proposed Rating & Band — Reasoning',
+      hint: 'AI generates the case for your proposed rating/band based on evidence. Shown as reasoning, not on the form itself — copy what you want into the header above.',
+      placeholder: 'Click the AI button to generate the case for your proposed rating, with evidence from your context.',
+      type: 'reasoning'
+    },
+    {
+      id: 'fy26Perf',
+      title: 'FY26 Performance Summary (inc. delivery against goals)',
+      hint: 'Map evidence to your INC goals. Lead with quantified outcomes.',
+      placeholder: 'Type here — or use AI to draft from your context.'
+    },
+    {
+      id: 'purpose',
+      title: 'Purpose: Evidence of contribution to KPMG\'s purpose',
+      hint: '"Inspire confidence, empower change." Show how your work moved the firm, clients, community, or profession.',
+      placeholder: 'Type here'
+    },
+    {
+      id: 'consulting',
+      title: 'Consulting — Gross Margin, Revenue, Sales & Collaboration Measures',
+      hint: 'Review sales contribution with PDM. Only include sales where you had significant involvement in winning. Align to your monthly scorecard / TTP targets.',
+      placeholder: 'Type here'
+    },
+    {
+      id: 'clients',
+      title: 'Clients (% of engagements surveyed / client satisfaction)',
+      hint: 'Survey coverage, NPS/CSAT, named client wins, expansion stories.',
+      placeholder: 'Type here'
+    },
+    {
+      id: 'people',
+      title: 'People: Partner Performance Feedback (PPF) & Alignment to KPMG Values',
+      hint: 'PPF themes (verbatim where powerful). Map to KPMG values: Integrity, Excellence, Courage, Together, For Better.',
+      placeholder: 'Type here'
+    },
+    {
+      id: 'industries',
+      title: 'Industries (including Sector and/or Account)',
+      hint: 'Sector positioning, account leadership, market presence, thought leadership.',
+      placeholder: 'Type here'
+    },
+    {
+      id: 'practice',
+      title: 'Practice and Engagement Management / Risk',
+      hint: 'Quality, risk management, engagement health, write-offs/recovery, compliance.',
+      placeholder: 'Type here'
+    },
+    {
+      id: 'devAI',
+      title: 'Personal Development (including Adoption of AI)',
+      hint: 'CPD, formal learning, AI tools adopted, where you stretched yourself.',
+      placeholder: 'Type here'
+    },
+    {
+      id: 'strengths',
+      title: 'Key Strengths and Development Areas',
+      hint: 'Honest split. Strengths backed by evidence; development areas with what you\'re doing about them.',
+      placeholder: 'Type here'
+    },
+    {
+      id: 'other',
+      title: 'Any Other Matters to Be Considered',
+      hint: 'Anything that didn\'t fit elsewhere — life events, role changes mid-year, secondments, IP contributions.',
+      placeholder: 'Type here'
+    }
+  ];
+
+  const STORAGE_KEY = 'kpmgFY26Form_v1';
+  const KEY_STORAGE = 'kpmgFY26ApiKey_v1';
+  const MODEL_STORAGE = 'kpmgFY26Model_v1';
+  const TARGET_WORDS = 1200; // ~2 pages in form layout
+
+  const HEADER_FIELDS = ['f_name','f_pdm','f_currentBand','f_propRating','f_propBand','f_roles','f_ptnrFeedback','f_responses','f_industry','f_bg','f_indRev','f_bgDc','f_secRev','f_blDc'];
+  const CONTEXT_FIELDS = ['ctxAchievements','ctxGoals','ctxDev','ctxTone'];
+
+  // ===== Render narrative sections =====
+  const sectionsContainer = document.getElementById('narrativeSections');
+  SECTIONS.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'section';
+    div.dataset.id = s.id;
+    div.innerHTML = `
+      <div class="section-head">
+        <div style="flex: 1; min-width: 0;">
+          <span class="section-title-num">§${String(i+1).padStart(2,'0')}</span>
+          <div class="section-title">${s.title}</div>
+          <div class="section-hint">${s.hint}</div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+          <button class="btn ai-small" data-ai-section="${s.id}">⚡ AI draft</button>
+          <div class="section-meta"><span class="wc" id="wc_${s.id}">0 words</span></div>
+        </div>
+      </div>
+      <textarea class="narrative" id="sec_${s.id}" placeholder="${s.placeholder}"></textarea>
+      <div class="ai-reasoning" id="reason_${s.id}">
+        <div class="ai-reasoning-label">AI reasoning · evidence used</div>
+        <div id="reasonBody_${s.id}"></div>
+      </div>
+    `;
+    sectionsContainer.appendChild(div);
+  });
+
+  // ===== Toast =====
+  let toastTimer = null;
+  function toast(msg, type) {
+    const t = document.getElementById('toast');
+    if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
+    const hint = type === 'error' ? '<span class="dismiss-hint">click to dismiss</span>' : '';
+    t.innerHTML = msg + hint;
+    t.className = 'toast show' + (type ? ' ' + type : '');
+    if (type === 'error') {
+      t.onclick = () => { t.className = 'toast'; t.onclick = null; };
+    } else {
+      t.onclick = null;
+      toastTimer = setTimeout(() => { t.className = 'toast'; }, 3000);
+    }
+  }
+
+  // ===== Debug logger =====
+  const debugEntries = [];
+  let debugErrCount = 0;
+  const debugFab = document.getElementById('debugFab');
+  const debugPanel = document.getElementById('debugPanel');
+  const debugBody = document.getElementById('debugBody');
+  const debugBadge = document.getElementById('debugBadge');
+
+  function renderDebug() {
+    if (debugEntries.length === 0) {
+      debugBody.innerHTML = '<div class="debug-empty">No API calls yet. Click "Test connection" or generate a section to see request/response details here.</div>';
+      return;
+    }
+    debugBody.innerHTML = debugEntries.slice().reverse().map((e, i) => {
+      const idx = debugEntries.length - 1 - i;
+      const statusClass = e.status === 'ok' ? 'ok' : (e.status === 'err' ? 'err' : 'pending');
+      const statusText = e.status === 'ok' ? `OK ${e.httpStatus || ''}` : (e.status === 'err' ? `ERR ${e.httpStatus || ''}` : 'PENDING');
+      const time = new Date(e.timestamp).toLocaleTimeString('en-AU', { hour12: false });
+      const durationStr = e.duration != null ? ` · ${e.duration}ms` : '';
+      const tokensStr = e.usage ? ` · in:${e.usage.input_tokens} out:${e.usage.output_tokens}` : '';
+      return `
+        <div class="debug-entry" data-idx="${idx}">
+          <div class="debug-entry-head">
+            <span class="debug-entry-status ${statusClass}">${statusText}</span>
+            <span class="debug-entry-section">${e.label}</span>
+            <span class="debug-entry-meta">${time}${durationStr}${tokensStr}</span>
+            <span class="debug-entry-toggle" data-toggle="${idx}">▸ details</span>
+          </div>
+          <div class="debug-entry-detail">${escapeHtml(e.detail || '')}</div>
+        </div>
+      `;
+    }).join('');
+    debugBody.querySelectorAll('.debug-entry-toggle').forEach(t => {
+      t.addEventListener('click', () => {
+        const entry = t.closest('.debug-entry');
+        entry.classList.toggle('expanded');
+        t.textContent = entry.classList.contains('expanded') ? '▾ details' : '▸ details';
+      });
+    });
+  }
+  function updateDebugBadge() {
+    if (debugErrCount > 0) {
+      debugBadge.textContent = debugErrCount;
+      debugBadge.classList.remove('hidden');
+    } else {
+      debugBadge.classList.add('hidden');
+    }
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function debugLog(entry) {
+    debugEntries.push(entry);
+    if (entry.status === 'err') { debugErrCount++; updateDebugBadge(); }
+    renderDebug();
+  }
+  function debugUpdate(idx, patch) {
+    if (!debugEntries[idx]) return;
+    Object.assign(debugEntries[idx], patch);
+    if (patch.status === 'err') { debugErrCount++; updateDebugBadge(); }
+    renderDebug();
+  }
+
+  debugFab.addEventListener('click', () => {
+    debugPanel.classList.add('show');
+    debugFab.style.display = 'none';
+    debugErrCount = 0;
+    updateDebugBadge();
+  });
+  document.getElementById('debugClose').addEventListener('click', () => {
+    debugPanel.classList.remove('show');
+    debugFab.style.display = 'flex';
+  });
+  document.getElementById('debugClear').addEventListener('click', () => {
+    debugEntries.length = 0;
+    debugErrCount = 0;
+    updateDebugBadge();
+    renderDebug();
+  });
+  document.getElementById('debugCopyAll').addEventListener('click', () => {
+    const text = debugEntries.map(e => {
+      const time = new Date(e.timestamp).toISOString();
+      return `[${time}] ${e.status.toUpperCase()} ${e.httpStatus || ''} · ${e.label} · ${e.duration || '?'}ms\n${e.detail || ''}\n---`;
+    }).join('\n');
+    navigator.clipboard.writeText(text).then(() => toast('Debug log copied', 'success'));
+  });
+
+  // ===== State persistence =====
+  function collectState() {
+    const state = { header: {}, sections: {}, reasoning: {} };
+    HEADER_FIELDS.forEach(f => state.header[f] = document.getElementById(f).value);
+    SECTIONS.forEach(s => {
+      state.sections[s.id] = document.getElementById('sec_' + s.id).value;
+      const reason = document.getElementById('reasonBody_' + s.id);
+      if (reason && reason.textContent) state.reasoning[s.id] = reason.textContent;
+    });
+    CONTEXT_FIELDS.forEach(f => state[f] = document.getElementById(f).value);
+    return state;
+  }
+  function applyState(state) {
+    if (!state) return;
+    if (state.header) HEADER_FIELDS.forEach(f => {
+      const el = document.getElementById(f);
+      if (el && state.header[f] !== undefined) el.value = state.header[f];
+    });
+    if (state.sections) SECTIONS.forEach(s => {
+      const ta = document.getElementById('sec_' + s.id);
+      if (ta && state.sections[s.id] !== undefined) ta.value = state.sections[s.id];
+    });
+    if (state.reasoning) Object.keys(state.reasoning).forEach(id => {
+      const body = document.getElementById('reasonBody_' + id);
+      const wrap = document.getElementById('reason_' + id);
+      if (body && wrap) { body.textContent = state.reasoning[id]; wrap.classList.add('show'); }
+    });
+    CONTEXT_FIELDS.forEach(f => {
+      const el = document.getElementById(f);
+      if (el && state[f] !== undefined) el.value = state[f];
+    });
+    updateAllCounts();
+  }
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(collectState()));
+  }
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return null; }
+  }
+
+  // ===== Word counts =====
+  function wordCount(s) {
+    if (!s || !s.trim()) return 0;
+    return s.trim().split(/\s+/).length;
+  }
+  function updateAllCounts() {
+    let total = 0;
+    SECTIONS.forEach(s => {
+      const ta = document.getElementById('sec_' + s.id);
+      if (!ta) return;
+      const wc = wordCount(ta.value);
+      total += wc;
+      const wcEl = document.getElementById('wc_' + s.id);
+      if (wcEl) wcEl.textContent = wc + ' words';
+    });
+    HEADER_FIELDS.forEach(f => {
+      const el = document.getElementById(f);
+      if (el) total += wordCount(el.value);
+    });
+    const fill = document.getElementById('budgetFill');
+    const count = document.getElementById('budgetCount');
+    if (!fill || !count) return;
+    const pct = Math.min(100, (total / TARGET_WORDS) * 100);
+    fill.style.width = pct + '%';
+    fill.classList.remove('warn', 'over');
+    if (total > TARGET_WORDS) fill.classList.add('over');
+    else if (total > TARGET_WORDS * 0.85) fill.classList.add('warn');
+    count.textContent = `${total} / ${TARGET_WORDS} words`;
+  }
+
+  // ===== API key handling =====
+  const keyInput = document.getElementById('apiKey');
+  const keyStatus = document.getElementById('keyStatus');
+  document.getElementById('toggleKey').addEventListener('click', () => {
+    keyInput.type = keyInput.type === 'password' ? 'text' : 'password';
+  });
+  document.getElementById('saveKey').addEventListener('click', () => {
+    const v = keyInput.value.trim();
+    if (!v) { toast('Paste an API key first', 'error'); return; }
+    if (!v.startsWith('sk-ant-')) { toast('Key should start with sk-ant-', 'error'); return; }
+    localStorage.setItem(KEY_STORAGE, v);
+    updateKeyStatus();
+    toast('API key saved (local browser only)', 'success');
+  });
+  function updateKeyStatus() {
+    const saved = localStorage.getItem(KEY_STORAGE);
+    if (saved) {
+      keyStatus.textContent = 'Key saved · ...' + saved.slice(-6);
+      keyStatus.className = 'key-status ok';
+      keyInput.value = saved;
+    } else {
+      keyStatus.textContent = 'No key saved';
+      keyStatus.className = 'key-status miss';
+    }
+  }
+
+  // ===== Model selection =====
+  const modelSelect = document.getElementById('modelSelect');
+  modelSelect.addEventListener('change', () => {
+    localStorage.setItem(MODEL_STORAGE, modelSelect.value);
+  });
+  const savedModel = localStorage.getItem(MODEL_STORAGE);
+  if (savedModel) modelSelect.value = savedModel;
+
+  // ===== Prompt construction =====
+  function buildContextBlock() {
+    const get = id => document.getElementById(id).value.trim();
+    const header = {};
+    HEADER_FIELDS.forEach(f => { const v = get(f); if (v) header[f.replace('f_','')] = v; });
+
+    const ctx = {
+      header,
+      achievements: get('ctxAchievements'),
+      goals: get('ctxGoals'),
+      development: get('ctxDev'),
+      tone: get('ctxTone')
+    };
+
+    let block = `KPMG FY26 PARTNER YEAR-END PERFORMANCE SUMMARY CONTEXT
+=========================================================
+
+HEADER METRICS (already entered on form):
+${Object.entries(header).map(([k,v]) => `• ${k}: ${v}`).join('\n') || '(none yet)'}
+
+ACHIEVEMENTS & EVIDENCE (raw notes from partner):
+${ctx.achievements || '(none provided)'}
+
+FY26 GOALS (INC):
+${ctx.goals || '(none provided)'}
+
+DEVELOPMENT AREAS WORKED ON:
+${ctx.development || '(none provided)'}
+
+TONE / POSITIONING:
+${ctx.tone || '(default — professional, evidence-led, confident but not boastful)'}
+`;
+    return block;
+  }
+
+  const SYSTEM_PROMPT = `You are an expert advisor helping a KPMG Australia Partner draft their FY26 Year-End Performance Summary Form. This form is the basis for a verbal summary of performance at the partner review.
+
+WRITING STYLE:
+- Concise, professional, evidence-led. Lead with outcomes and numbers.
+- Use partner-grade language: "Led", "Delivered", "Architected", "Mentored" — not "I helped" or "I was involved in".
+- Quantify where possible: $ values, % variance, NPS, team size, sector impact.
+- KPMG values to reference where natural: Integrity, Excellence, Courage, Together, For Better.
+- KPMG purpose: "Inspire confidence, empower change."
+- The form has a TWO-PAGE LIMIT — be tight. No filler, no marketing prose, no repetition.
+- Use short paragraphs or sharp bullet points. Sentences ≤ 25 words.
+- Do not invent specific numbers or claims not present in the context. If a number is missing, write a placeholder like "[$X.XXm]" or "[N clients]" so the partner can fill it.
+
+NEVER:
+- Use AI-cliché language ("delve", "leverage", "synergies", "in today's fast-paced world").
+- Add a preamble ("Here is a draft..."). Output the section content only.
+- Wrap in quotes or markdown code fences.
+- Repeat the section heading at the start of the content.`;
+
+  const SECTION_PROMPTS = {
+    rating: `TASK: Draft the case for the Proposed Rating and Proposed Band shown in the header.
+- If Proposed Rating/Band are filled in, build the case for them.
+- If they are blank, recommend a rating/band and explain why.
+- Map evidence directly to KPMG partner rating criteria (financial delivery, client outcomes, people, risk, firm contribution).
+- Be honest about gaps if context shows them.
+- 150-220 words. Structured as: opening sentence with the ask, then 4-6 evidence-backed bullets, then one closing line on trajectory.
+- Output plain text only.`,
+
+    fy26Perf: `TASK: Draft the "FY26 Performance Summary (inc. delivery against goals)" section.
+- Open with one sentence summarising the year.
+- Then bullets mapping evidence directly to each FY26 goal/INC line provided.
+- For each goal: state the goal, then the outcome with quantified evidence.
+- 120-180 words.`,
+
+    purpose: `TASK: Draft the "Purpose" section — evidence of contribution to KPMG's purpose ("Inspire confidence, empower change").
+- 3-4 short bullets, each tying a specific action to client/community/firm outcomes.
+- Avoid platitudes. Each bullet must include a concrete example.
+- 80-120 words.`,
+
+    consulting: `TASK: Draft the "Consulting — Gross Margin, Revenue, Sales & Collaboration Measures" section.
+- Lead with: revenue vs budget ($ and % var), gross margin vs budget, sales originated/won (only where partner had significant involvement).
+- Then 2-3 lines on collaboration: cross-BG/cross-sector wins, joint engagements, internal team plays.
+- Reference TTP target alignment if mentioned in context.
+- 100-150 words. Use bullets for the metrics block.`,
+
+    clients: `TASK: Draft the "Clients" section.
+- Survey coverage (% of engagements surveyed) and CSAT/NPS results.
+- 2-3 named client wins or expansion stories with outcomes.
+- Any verbatim client praise from context.
+- 80-130 words.`,
+
+    people: `TASK: Draft the "People — PPF & Alignment to KPMG Values" section.
+- Open with PPF response count and headline themes (use partner's words from context).
+- Map themes to KPMG values: Integrity, Excellence, Courage, Together, For Better.
+- 2-3 specific people moves: promotions sponsored, mentees developed, team led.
+- 100-150 words.`,
+
+    industries: `TASK: Draft the "Industries (including Sector and/or Account)" section.
+- Sector positioning and market presence.
+- Named account leadership with outcomes.
+- Thought leadership: articles, POVs, speaking, IP authored.
+- 80-130 words.`,
+
+    practice: `TASK: Draft the "Practice and Engagement Management / Risk" section.
+- Engagement health: utilisation, recovery, write-offs (if context has them).
+- Risk management: clean risk record / quality reviews / no significant issues.
+- Compliance: independence, mandatory training, conflict checks.
+- 80-120 words.`,
+
+    devAI: `TASK: Draft the "Personal Development (including Adoption of AI)" section.
+- Lead with AI adoption — tools used, frameworks built, training completed, ways AI has changed how the partner works or serves clients.
+- Then formal CPD / leadership development / external learning.
+- 100-140 words.`,
+
+    strengths: `TASK: Draft the "Key Strengths and Development Areas" section.
+- Format: "Strengths:" then 3-4 bullets, each with one piece of evidence. "Development areas:" then 2-3 bullets, each with what the partner is actively doing about it.
+- Be honest about development areas — pulled from the context's "areas worked on" notes.
+- 100-150 words.`,
+
+    other: `TASK: Draft the "Any Other Matters to Be Considered" section.
+- Only include if the context has something genuinely relevant: mid-year role changes, secondments, life events, IP contributions, external recognition.
+- If nothing notable, return: "Nothing further to add for FY26."
+- 40-80 words maximum.`
+  };
+
+  // ===== Friendlier error classifier =====
+  function classifyError(httpStatus, errBody, networkErr) {
+    if (networkErr) {
+      const msg = String(networkErr.message || networkErr);
+      if (/Failed to fetch|NetworkError|TypeError/i.test(msg)) {
+        return {
+          short: 'Network / CORS failure — could not reach api.anthropic.com',
+          hint: 'Check internet connection. If you are behind a corporate proxy (e.g. KPMG network), it may be blocking the request. Try a personal network or VPN. Browser DevTools → Network tab will show the actual reason.'
+        };
+      }
+      return { short: msg, hint: 'Unexpected network error. See browser DevTools console for the stack trace.' };
+    }
+    let parsed = null;
+    try { parsed = JSON.parse(errBody); } catch {}
+    const apiMsg = parsed?.error?.message || errBody || '';
+    if (httpStatus === 401) return { short: '401 — invalid API key', hint: 'The key was rejected. Check you pasted the full key (starts with sk-ant-) and that it has not been revoked in console.anthropic.com.' };
+    if (httpStatus === 403) return { short: '403 — forbidden', hint: 'The key may not have access to this model, or your account is restricted. Try Sonnet 4.6 if you were using Opus 4.7.' };
+    if (httpStatus === 404) return { short: '404 — model not found', hint: `The model "${modelSelect.value}" is not available on your account. Anthropic deprecates older models and adds new ones — check console.anthropic.com → Models for available IDs.` };
+    if (httpStatus === 429) return { short: '429 — rate limit / quota exceeded', hint: 'Either you have hit the per-minute rate limit (wait 60 seconds) or your monthly spend cap (check console.anthropic.com → Billing).' };
+    if (httpStatus === 400) return { short: `400 — bad request: ${apiMsg}`, hint: 'The request body was malformed or contained invalid parameter values. Common cause: wrong model ID format.' };
+    if (httpStatus === 500 || httpStatus === 502 || httpStatus === 503 || httpStatus === 529) return { short: `${httpStatus} — Anthropic server error`, hint: 'This is on Anthropic\'s side. Wait 30 seconds and retry. Check status.anthropic.com.' };
+    return { short: `HTTP ${httpStatus}: ${apiMsg || errBody.slice(0, 200)}`, hint: '' };
+  }
+
+  // ===== Shared API caller with debug logging =====
+  async function callAnthropic({ label, systemPrompt, userPrompt, maxTokens = 1500 }) {
+    const apiKey = localStorage.getItem(KEY_STORAGE);
+    if (!apiKey) {
+      const err = new Error('No API key saved');
+      err.userMessage = 'Save your Anthropic API key in the sidebar first';
+      throw err;
+    }
+
+    const model = modelSelect.value;
+    const requestBody = {
+      model,
+      max_tokens: maxTokens,
+      ...(systemPrompt ? { system: systemPrompt } : {}),
+      messages: [{ role: 'user', content: userPrompt }]
+    };
+
+    const start = performance.now();
+    const entryIdx = debugEntries.length;
+    debugLog({
+      label,
+      status: 'pending',
+      timestamp: Date.now(),
+      detail: `MODEL: ${model}\nKEY: ...${apiKey.slice(-6)}\nPROMPT LENGTH: ${userPrompt.length} chars (${Math.round(userPrompt.length/4)} approx tokens)\nMAX_TOKENS: ${maxTokens}\n\n--- SYSTEM ---\n${systemPrompt || '(none)'}\n\n--- USER ---\n${userPrompt}`
+    });
+
+    let response, errText, networkErr;
+    try {
+      response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify(requestBody)
+      });
+    } catch (e) {
+      networkErr = e;
+    }
+
+    const duration = Math.round(performance.now() - start);
+
+    if (networkErr) {
+      const cls = classifyError(null, null, networkErr);
+      debugUpdate(entryIdx, {
+        status: 'err',
+        duration,
+        detail: debugEntries[entryIdx].detail + `\n\n--- ERROR ---\n${cls.short}\n\nHINT: ${cls.hint}\n\nRAW: ${networkErr.stack || networkErr.message}`
+      });
+      const err = new Error(cls.short);
+      err.userMessage = cls.short + (cls.hint ? '\n\n' + cls.hint : '');
+      throw err;
+    }
+
+    if (!response.ok) {
+      try { errText = await response.text(); } catch { errText = '(could not read error body)'; }
+      const cls = classifyError(response.status, errText);
+      debugUpdate(entryIdx, {
+        status: 'err',
+        httpStatus: response.status,
+        duration,
+        detail: debugEntries[entryIdx].detail + `\n\n--- ERROR ---\n${cls.short}\n\nHINT: ${cls.hint}\n\nRAW RESPONSE BODY:\n${errText}`
+      });
+      const err = new Error(cls.short);
+      err.userMessage = cls.short + (cls.hint ? '\n\n' + cls.hint : '');
+      throw err;
+    }
+
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      debugUpdate(entryIdx, {
+        status: 'err',
+        httpStatus: response.status,
+        duration,
+        detail: debugEntries[entryIdx].detail + `\n\n--- ERROR ---\nResponse was not valid JSON: ${e.message}`
+      });
+      const err = new Error('Invalid JSON response');
+      err.userMessage = 'Anthropic returned an invalid response. Check debug panel for raw body.';
+      throw err;
+    }
+
+    const text = (data.content || []).map(b => b.text || '').join('').trim();
+    if (!text) {
+      const stopReason = data.stop_reason || 'unknown';
+      debugUpdate(entryIdx, {
+        status: 'err',
+        httpStatus: response.status,
+        duration,
+        usage: data.usage,
+        detail: debugEntries[entryIdx].detail + `\n\n--- EMPTY OUTPUT ---\nstop_reason: ${stopReason}\nusage: ${JSON.stringify(data.usage)}\n\nFULL RESPONSE:\n${JSON.stringify(data, null, 2)}`
+      });
+      const hint = stopReason === 'refusal' ? 'The model declined to generate content. Try a different section or rephrase your context.'
+                 : stopReason === 'max_tokens' ? 'Hit max_tokens before producing visible output (all tokens used by thinking). Try a smaller prompt or different section.'
+                 : 'Empty response with no clear reason. See debug panel.';
+      const err = new Error('Empty response');
+      err.userMessage = `AI returned empty text (stop_reason: ${stopReason}). ${hint}`;
+      throw err;
+    }
+
+    debugUpdate(entryIdx, {
+      status: 'ok',
+      httpStatus: response.status,
+      duration,
+      usage: data.usage,
+      detail: debugEntries[entryIdx].detail + `\n\n--- SUCCESS ---\nstop_reason: ${data.stop_reason}\nusage: ${JSON.stringify(data.usage)}\n\n--- OUTPUT (${text.length} chars) ---\n${text}`
+    });
+
+    return { text, data };
+  }
+
+  // ===== AI call wrapper for a specific section =====
+  async function callClaude(sectionId) {
+    const ta = document.getElementById('sec_' + sectionId);
+    if (!ta) {
+      toast(`Section "${sectionId}" not found in form. The app may be out of sync — try refreshing the page.`, 'error');
+      return null;
+    }
+    const aiBtn = document.querySelector(`[data-ai-section="${sectionId}"]`);
+    const sectionEl = ta.closest('.section');
+    const meta = sectionEl ? sectionEl.querySelector('.section-meta') : null;
+
+    const prevBtnText = aiBtn ? aiBtn.textContent : '';
+    if (aiBtn) { aiBtn.disabled = true; aiBtn.textContent = '⏳ Drafting...'; }
+    if (meta) meta.innerHTML = '<span class="draft-status thinking"><span class="spinner"></span> Drafting</span>';
+
+    try {
+      const context = buildContextBlock();
+      const sectionPrompt = SECTION_PROMPTS[sectionId];
+      const fullPrompt = `${context}\n\n${sectionPrompt}`;
+      const sectionTitle = SECTIONS.find(s => s.id === sectionId)?.title || sectionId;
+
+      const { text } = await callAnthropic({
+        label: sectionTitle.slice(0, 50),
+        systemPrompt: SYSTEM_PROMPT,
+        userPrompt: fullPrompt,
+        maxTokens: 1500
+      });
+
+      if (sectionId === 'rating') {
+        const body = document.getElementById('reasonBody_rating');
+        const wrap = document.getElementById('reason_rating');
+        if (body) body.textContent = text;
+        if (wrap) wrap.classList.add('show');
+        ta.value = text;
+      } else {
+        ta.value = text;
+        ta.classList.add('has-ai');
+      }
+      updateAllCounts();
+      saveState();
+      if (meta) meta.innerHTML = `<span class="wc">${wordCount(ta.value)} words</span>`;
+      return text;
+    } catch (e) {
+      console.error('[callClaude] error:', e);
+      const userMsg = e.userMessage || e.message || 'Unknown error';
+      toast('AI draft failed — ' + userMsg + ' · Check Debug panel for details', 'error');
+      if (meta) meta.innerHTML = `<span class="wc">${wordCount(ta.value)} words</span>`;
+      return null;
+    } finally {
+      if (aiBtn) { aiBtn.disabled = false; aiBtn.textContent = prevBtnText; }
+    }
+  }
+
+  // ===== Test connection =====
+  document.getElementById('btnTestConnection').addEventListener('click', async () => {
+    const btn = document.getElementById('btnTestConnection');
+    const resultEl = document.getElementById('testResult');
+    btn.disabled = true;
+    btn.textContent = 'Testing...';
+    resultEl.className = 'test-result';
+    resultEl.textContent = '';
+
+    try {
+      const { text, data } = await callAnthropic({
+        label: 'Connection test',
+        systemPrompt: null,
+        userPrompt: 'Respond with exactly the word: PONG',
+        maxTokens: 10
+      });
+      const ok = /PONG/i.test(text);
+      resultEl.className = 'test-result show ok';
+      resultEl.innerHTML = `✓ Connection OK · model=${modelSelect.value} · tokens used: in ${data.usage?.input_tokens || '?'} / out ${data.usage?.output_tokens || '?'}<br>Response: "${text.slice(0, 60)}"`;
+    } catch (e) {
+      resultEl.className = 'test-result show err';
+      resultEl.innerHTML = `✗ ${escapeHtml(e.userMessage || e.message)}`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '⚡ Test connection';
+    }
+  });
+
+  // ===== Wire up AI buttons =====
+  document.querySelectorAll('[data-ai-section]').forEach(btn => {
+    btn.addEventListener('click', () => callClaude(btn.dataset.aiSection));
+  });
+
+  document.getElementById('draftAll').addEventListener('click', async () => {
+    const apiKey = localStorage.getItem(KEY_STORAGE);
+    if (!apiKey) { toast('Save your API key first', 'error'); return; }
+
+    const achievements = document.getElementById('ctxAchievements').value.trim();
+    if (!achievements) {
+      if (!confirm('Your achievements/evidence context is empty. The AI will produce generic placeholder text. Continue anyway?')) return;
+    }
+
+    const btn = document.getElementById('draftAll');
+    btn.disabled = true;
+    const orig = btn.textContent;
+
+    let done = 0;
+    for (const s of SECTIONS) {
+      done++;
+      btn.textContent = `⏳ Drafting ${done}/${SECTIONS.length} — ${s.title.split(' (')[0].slice(0, 30)}...`;
+      await callClaude(s.id);
+    }
+    btn.disabled = false;
+    btn.textContent = orig;
+    toast(`Drafted ${SECTIONS.length} sections. Review and refine.`, 'success');
+  });
+
+  // ===== Save / Clear / Print =====
+  document.getElementById('btnSave').addEventListener('click', () => {
+    saveState();
+    toast('Saved to browser', 'success');
+  });
+
+  document.getElementById('btnClear').addEventListener('click', () => {
+    if (!confirm('Clear all form fields and AI drafts? Context notes in the sidebar will be kept.')) return;
+    HEADER_FIELDS.forEach(f => {
+      const el = document.getElementById(f);
+      if (el) el.value = '';
+    });
+    SECTIONS.forEach(s => {
+      const ta = document.getElementById('sec_' + s.id);
+      if (ta) { ta.value = ''; ta.classList.remove('has-ai'); }
+      const body = document.getElementById('reasonBody_' + s.id);
+      const wrap = document.getElementById('reason_' + s.id);
+      if (body) body.textContent = '';
+      if (wrap) wrap.classList.remove('show');
+    });
+    updateAllCounts();
+    saveState();
+    toast('Form cleared');
+  });
+
+  // ===== Word export =====
+  document.getElementById('btnExportWord').addEventListener('click', async () => {
+    const btn = document.getElementById('btnExportWord');
+    const orig = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Building...';
+    try {
+      await exportToWord();
+      toast('Word document downloaded', 'success');
+    } catch (e) {
+      console.error(e);
+      toast('Word export failed: ' + e.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = orig;
+    }
+  });
+
+  async function exportToWord() {
+    const { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle, ShadingType, PageBreak, Footer, Header } = docx;
+
+    const KPMG_NAVY = "00338D";
+    const KPMG_BLUE = "0091DA";
+    const INK = "1A1A1A";
+    const INK_MUTED = "8A8A8A";
+    const LINE = "D9D6CC";
+
+    const get = id => (document.getElementById(id).value || '').trim();
+    const name = get('f_name') || 'Partner';
+
+    // Helper: bordered cell with label + value
+    const labelCell = (label) => new TableCell({
+      width: { size: 30, type: WidthType.PERCENTAGE },
+      shading: { type: ShadingType.CLEAR, color: "auto", fill: "F0EDE3" },
+      borders: borderAll(LINE),
+      children: [new Paragraph({
+        children: [new TextRun({ text: label.toUpperCase(), bold: true, size: 14, color: KPMG_NAVY, font: "Calibri" })],
+        spacing: { before: 60, after: 60 }
+      })]
+    });
+    const valueCell = (value) => new TableCell({
+      width: { size: 70, type: WidthType.PERCENTAGE },
+      borders: borderAll(LINE),
+      children: [new Paragraph({
+        children: [new TextRun({ text: value || ' ', size: 20, color: INK, font: "Calibri" })],
+        spacing: { before: 60, after: 60 }
+      })]
+    });
+    function borderAll(color) {
+      const b = { style: BorderStyle.SINGLE, size: 4, color };
+      return { top: b, bottom: b, left: b, right: b };
+    }
+
+    // Header strip — two-column table mimicking the form
+    const headerRows = [
+      [['Name', get('f_name')], ['PDM', get('f_pdm')]],
+      [['Current Band', get('f_currentBand')], ['Proposed Rating', get('f_propRating')]],
+      [['Proposed Band', get('f_propBand')], ['Ptnr Feedback', get('f_ptnrFeedback')]],
+      [['Roles (and % of time spent)', get('f_roles')], ['# Responses', get('f_responses')]],
+      [['Industry & Sector Alignment', get('f_industry')], ['BG & Business Line', get('f_bg')]],
+      [['Industry Rev v Bud ($ and % var)', get('f_indRev')], ['BG DC v Bud ($ & % var)', get('f_bgDc')]],
+      [['Sector Rev v Bud ($ and % var)', get('f_secRev')], ['BL DC v Bud ($ & % var)', get('f_blDc')]]
+    ];
+
+    const headerTableRows = headerRows.map(pair =>
+      new TableRow({
+        children: [
+          labelCell(pair[0][0]), valueCell(pair[0][1]),
+          labelCell(pair[1][0]), valueCell(pair[1][1])
+        ]
+      })
+    );
+
+    const headerTable = new Table({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      borders: {
+        top: { style: BorderStyle.SINGLE, size: 4, color: LINE },
+        bottom: { style: BorderStyle.SINGLE, size: 4, color: LINE },
+        left: { style: BorderStyle.SINGLE, size: 4, color: LINE },
+        right: { style: BorderStyle.SINGLE, size: 4, color: LINE },
+        insideHorizontal: { style: BorderStyle.SINGLE, size: 4, color: LINE },
+        insideVertical: { style: BorderStyle.SINGLE, size: 4, color: LINE }
+      },
+      rows: headerTableRows,
+      columnWidths: [2500, 2500, 2500, 2500]
+    });
+
+    // Build narrative sections as a single-column table where each row is one section
+    const narrativeRows = SECTIONS.map(s => {
+      const content = get('sec_' + s.id);
+      return new TableRow({
+        children: [
+          new TableCell({
+            width: { size: 30, type: WidthType.PERCENTAGE },
+            shading: { type: ShadingType.CLEAR, color: "auto", fill: "F0EDE3" },
+            borders: borderAll(LINE),
+            children: [new Paragraph({
+              children: [new TextRun({ text: s.title, bold: true, size: 16, color: KPMG_NAVY, font: "Calibri" })],
+              spacing: { before: 100, after: 100 }
+            })]
+          }),
+          new TableCell({
+            width: { size: 70, type: WidthType.PERCENTAGE },
+            borders: borderAll(LINE),
+            children: paragraphsFromText(content, INK)
+          })
+        ]
+      });
+    });
+
+    function paragraphsFromText(text, color) {
+      if (!text || !text.trim()) {
+        return [new Paragraph({ children: [new TextRun({ text: ' ', size: 20, font: "Calibri" })] })];
+      }
+      return text.split(/\n+/).map(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return new Paragraph({ children: [new TextRun({ text: ' ', size: 20, font: "Calibri" })] });
+        // Detect bullet markers
+        const bulletMatch = trimmed.match(/^[•\-\*]\s+(.*)$/);
+        if (bulletMatch) {
+          return new Paragraph({
+            children: [new TextRun({ text: bulletMatch[1], size: 20, color: color, font: "Calibri" })],
+            bullet: { level: 0 },
+            spacing: { before: 40, after: 40 }
+          });
+        }
+        return new Paragraph({
+          children: [new TextRun({ text: trimmed, size: 20, color: color, font: "Calibri" })],
+          spacing: { before: 60, after: 60 }
+        });
+      });
+    }
+
+    const narrativeTable = new Table({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      borders: {
+        top: { style: BorderStyle.SINGLE, size: 4, color: LINE },
+        bottom: { style: BorderStyle.SINGLE, size: 4, color: LINE },
+        left: { style: BorderStyle.SINGLE, size: 4, color: LINE },
+        right: { style: BorderStyle.SINGLE, size: 4, color: LINE },
+        insideHorizontal: { style: BorderStyle.SINGLE, size: 4, color: LINE },
+        insideVertical: { style: BorderStyle.SINGLE, size: 4, color: LINE }
+      },
+      rows: narrativeRows,
+      columnWidths: [3000, 7000]
+    });
+
+    const titleParagraph = new Paragraph({
+      children: [
+        new TextRun({ text: "FY26 Partner YE Performance Summary Form", bold: true, size: 32, color: KPMG_NAVY, font: "Calibri" })
+      ],
+      spacing: { after: 60 }
+    });
+
+    const subTitleParagraph = new Paragraph({
+      children: [
+        new TextRun({ text: "Please limit to two pages as these notes will be used for a verbal summary of performance", italics: true, size: 18, color: INK_MUTED, font: "Calibri" })
+      ],
+      spacing: { after: 240 }
+    });
+
+    const spacer = new Paragraph({ children: [new TextRun({ text: " ", font: "Calibri" })], spacing: { before: 120, after: 120 } });
+
+    const doc = new Document({
+      creator: "KPMG FY26 YE Summary App",
+      title: `FY26 YE Summary — ${name}`,
+      styles: {
+        default: {
+          document: {
+            run: { font: "Calibri", size: 20 }
+          }
+        }
+      },
+      sections: [{
+        properties: {
+          page: {
+            margin: { top: 720, right: 720, bottom: 720, left: 720 }  // 0.5"
+          }
+        },
+        footers: {
+          default: new Footer({
+            children: [new Paragraph({
+              alignment: AlignmentType.CENTER,
+              children: [new TextRun({ text: "CONFIDENTIAL · KPMG FY26 Partner Year-End Performance Summary · " + name, size: 14, color: INK_MUTED, font: "Calibri" })]
+            })]
+          })
+        },
+        children: [
+          titleParagraph,
+          subTitleParagraph,
+          headerTable,
+          spacer,
+          narrativeTable
+        ]
+      }]
+    });
+
+    const blob = await docx.Packer.toBlob(doc);
+    const safeName = name.replace(/[^a-z0-9_\-]/gi, '_');
+    saveAs(blob, `KPMG_FY26_YE_Summary_${safeName}_${todayStamp()}.docx`);
+  }
+
+  function todayStamp() {
+    const d = new Date();
+    return d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  }
+
+  // ===== JSON backup / restore =====
+  document.getElementById('btnExportJson').addEventListener('click', () => {
+    const state = collectState();
+    const payload = {
+      _meta: {
+        app: "KPMG FY26 YE Summary",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        partnerName: state.header.f_name || "Partner"
+      },
+      state
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const name = (state.header.f_name || 'partner').replace(/[^a-z0-9_\-]/gi, '_');
+    saveAs(blob, `KPMG_FY26_YE_Backup_${name}_${todayStamp()}.json`);
+    toast('JSON backup downloaded', 'success');
+  });
+
+  const jsonFileInput = document.getElementById('jsonFileInput');
+  document.getElementById('btnImportJson').addEventListener('click', () => {
+    jsonFileInput.click();
+  });
+  jsonFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        let state = data.state || data; // accept either {state: {...}} or raw state
+        if (!state.header && !state.sections) throw new Error('File does not look like a valid backup');
+        if (!confirm('Restore this backup? Current form contents will be replaced.')) {
+          jsonFileInput.value = '';
+          return;
+        }
+        applyState(state);
+        saveState();
+        toast('Backup restored', 'success');
+      } catch (err) {
+        toast('Restore failed: ' + err.message, 'error');
+      } finally {
+        jsonFileInput.value = '';
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  // ===== Live updates =====
+  [...HEADER_FIELDS, ...SECTIONS.map(s => 'sec_' + s.id), ...CONTEXT_FIELDS].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', () => {
+        updateAllCounts();
+        // Debounced save
+        clearTimeout(window._saveT);
+        window._saveT = setTimeout(saveState, 600);
+      });
+    }
+  });
+
+  // ===== Init =====
+  try {
+    applyState(loadState());
+  } catch (e) {
+    console.error('[init] applyState failed — clearing potentially stale state:', e);
+    localStorage.removeItem(STORAGE_KEY);
+    toast('Stored draft was incompatible and has been cleared. Your API key is unchanged.', 'error');
+  }
+  updateKeyStatus();
+  updateAllCounts();
+</script>
+</body>
+</html>
