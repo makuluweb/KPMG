@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#0a0e1a" />
+<title>3 Ups / 3 Downs — ENRC Consulting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0d1b3d;          /* deep navy */
+    --ink-dark: #00133c;     /* darker navy for headings */
+    --paper: #ffffff;
+    --paper-dim: #f4f6fb;
+    --rule: #0d1b3d;
+    --up: #00a3a1;           /* signature teal */
+    --down: #ea0029;         /* signature red */
+    --accent: #1e49e2;       /* electric blue */
+    --accent-light: #00b8f5; /* light blue */
+    --muted: #5b6478;
+    --border: #d6dce8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  body {
+    background-image:
+      linear-gradient(180deg, #f4f6fb 0%, #ffffff 280px);
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Brand band at very top */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--ink) 0%, var(--accent) 50%, var(--accent-light) 100%);
+    z-index: 200;
+  }
+
+  .app {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 32px 20px 40px;
+  }
+
+  /* Header */
+  .masthead {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  .eyebrow .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  h1.title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: clamp(36px, 10vw, 48px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    color: var(--ink-dark);
+  }
+
+  h1.title .slash {
+    color: var(--accent);
+    font-weight: 400;
+    padding: 0 4px;
+  }
+
+  .subtitle {
+    font-family: 'IBM Plex Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 15px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
+  /* Sections */
+  section {
+    margin-bottom: 32px;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--ink-dark);
+  }
+
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+
+  .section-title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    color: var(--ink-dark);
+    flex: 1;
+  }
+
+  /* Entry blocks */
+  .entry {
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .entry-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .badge.up { background: var(--up); color: #fff; }
+  .badge.down { background: var(--down); color: #fff; }
+  .badge.focus { background: var(--ink-dark); color: #fff; }
+
+  textarea, input[type="text"] {
+    width: 100%;
+    background: var(--paper-dim);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--ink);
+    padding: 12px 14px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--ink);
+    resize: none;
+    border-radius: 2px;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  }
+
+  .entry.up textarea { border-left-color: var(--up); }
+  .entry.down textarea { border-left-color: var(--down); }
+  .entry.focus textarea { border-left-color: var(--ink-dark); }
+
+  textarea:focus, input:focus {
+    outline: none;
+    background: #fff;
+    border-color: var(--accent);
+    border-left-width: 3px;
+    box-shadow: 0 0 0 3px rgba(30, 73, 226, 0.12);
+  }
+
+  textarea {
+    min-height: 60px;
+  }
+
+  /* Send section */
+  .send-section {
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 2px solid var(--ink-dark);
+  }
+
+  .send-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .btn {
+    appearance: none;
+    border: 1px solid var(--ink-dark);
+    background: var(--ink-dark);
+    color: #fff;
+    padding: 16px 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    border-radius: 2px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.1s ease, background 0.15s, box-shadow 0.15s;
+    text-decoration: none;
+  }
+
+  .btn:hover { box-shadow: 0 4px 12px rgba(13, 27, 61, 0.15); }
+  .btn:active { transform: scale(0.97); }
+
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .btn.secondary {
+    background: #fff;
+    color: var(--ink-dark);
+  }
+
+  .btn.whatsapp {
+    background: var(--up);
+    border-color: var(--up);
+  }
+
+  .btn .icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .btn .destination {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    opacity: 0.8;
+    letter-spacing: 0.04em;
+    font-weight: 400;
+  }
+
+  .btn-full {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: center;
+    padding: 14px;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--ink-dark);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 2px;
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.04em;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 100;
+    border-left: 3px solid var(--accent-light);
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Name input */
+  .name-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .name-row input {
+    border-left-color: var(--accent);
+  }
+
+  @media (min-width: 480px) {
+    .send-buttons { grid-template-columns: 1fr 1fr 1fr; }
+  }
+
+  /* Subtle entrance */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  section, .masthead { animation: rise 0.5s ease-out backwards; }
+  .masthead { animation-delay: 0.05s; }
+  section:nth-of-type(1) { animation-delay: 0.15s; }
+  section:nth-of-type(2) { animation-delay: 0.25s; }
+  section:nth-of-type(3) { animation-delay: 0.35s; }
+  .send-section { animation: rise 0.5s ease-out 0.45s backwards; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <header class="masthead">
+    <div class="eyebrow">
+      <span><span class="dot"></span>WEEKLY UPDATE</span>
+      <span id="weekLabel">WK —</span>
+    </div>
+    <h1 class="title">3 Ups<span class="slash">/</span>3 Downs</h1>
+    <p class="subtitle">Your weekly pulse, in under a minute.</p>
+  </header>
+
+  <div class="name-row">
+    <input type="text" id="senderName" placeholder="Your name (optional)" />
+  </div>
+
+  <!-- SECTION 1: The week that was -->
+  <section>
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <h2 class="section-title">The week that was</h2>
+    </div>
+
+    <div class="entry up">
+      <div class="entry-label"><span class="badge up">↑</span> UP 1</div>
+      <textarea id="up1" placeholder="A win, a breakthrough, momentum…"></textarea>
+    </div>
+    <div class="entry up">
+      <div class="entry-label"><span class="badge up">↑</span> UP 2</div>
+      <textarea id="up2" placeholder="Something that worked well…"></textarea>
+    </div>
+    <div class="entry up">
+      <div class="entry-label"><span class="badge up">↑</span> UP 3</div>
+      <textarea id="up3" placeholder="A moment of progress…"></textarea>
+    </div>
+
+    <div style="height: 8px"></div>
+
+    <div class="entry down">
+      <div class="entry-label"><span class="badge down">↓</span> DOWN 1</div>
+      <textarea id="dn1" placeholder="A challenge, blocker, or concern…"></textarea>
+    </div>
+    <div class="entry down">
+      <div class="entry-label"><span class="badge down">↓</span> DOWN 2</div>
+      <textarea id="dn2" placeholder="Something that needs attention…"></textarea>
+    </div>
+    <div class="entry down">
+      <div class="entry-label"><span class="badge down">↓</span> DOWN 3</div>
+      <textarea id="dn3" placeholder="A risk or lesson learned…"></textarea>
+    </div>
+  </section>
+
+  <!-- SECTION 2: Next week's focus -->
+  <section>
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Next week's focus</h2>
+    </div>
+
+    <div class="entry focus">
+      <div class="entry-label"><span class="badge focus">1</span> Priority</div>
+      <textarea id="f1" placeholder="The most important thing…"></textarea>
+    </div>
+    <div class="entry focus">
+      <div class="entry-label"><span class="badge focus">2</span> Priority</div>
+      <textarea id="f2" placeholder="Next up…"></textarea>
+    </div>
+    <div class="entry focus">
+      <div class="entry-label"><span class="badge focus">3</span> Priority</div>
+      <textarea id="f3" placeholder="And finally…"></textarea>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Send update -->
+  <section class="send-section">
+    <div class="section-head" style="border:none; padding:0; margin-bottom:8px;">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Send your update</h2>
+    </div>
+    <p style="font-size:13px; color:var(--muted); font-style:italic; font-family:'IBM Plex Serif',serif;">
+      Send via email or copy for use elsewhere.
+    </p>
+
+    <div class="send-buttons">
+      <button class="btn" onclick="sendEmail()">
+        <span class="icon">@</span>
+        <span>Email update</span>
+        <span class="destination">DIRECT TO LEAD</span>
+      </button>
+      <button class="btn secondary" onclick="copyText()">
+        <span class="icon">⧉</span>
+        <span>Copy to clipboard</span>
+        <span class="destination">PASTE ANYWHERE</span>
+      </button>
+    </div>
+  </section>
+
+  <div class="footer">
+    <span>ENRC · WEEKLY PULSE</span>
+    <span id="dateStamp"></span>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+  // Australian Financial Year week number
+  // FY runs 1 July → 30 June. Week 1 is the week containing 1 July.
+  // Weeks start Monday (consistent with ISO).
+  function getAUFinancialYearWeek(d) {
+    const year = d.getFullYear();
+    const month = d.getMonth(); // 0 = Jan
+    // If we're in Jan–Jun, the FY started on 1 July of the previous calendar year.
+    // If we're in Jul–Dec, the FY started on 1 July of this calendar year.
+    const fyStartYear = (month >= 6) ? year : year - 1;
+    const fyStartDate = new Date(fyStartYear, 6, 1); // 1 July
+
+    // Snap FY start back to the Monday of its week (so week 1 contains 1 July)
+    const fyDay = fyStartDate.getDay(); // 0=Sun ... 6=Sat
+    const daysSinceMonday = (fyDay + 6) % 7; // Mon=0, Tue=1 ... Sun=6
+    const fyWeekStart = new Date(fyStartDate);
+    fyWeekStart.setDate(fyStartDate.getDate() - daysSinceMonday);
+
+    // Days between today and FY week start
+    const msPerDay = 86400000;
+    const diffDays = Math.floor((d - fyWeekStart) / msPerDay);
+    const week = Math.floor(diffDays / 7) + 1;
+
+    // FY label e.g. "FY26" means year ending 30 June 2026
+    const fyLabel = 'FY' + String(fyStartYear + 1).slice(-2);
+
+    return { week, fyLabel };
+  }
+
+  const today = new Date();
+  const fy = getAUFinancialYearWeek(today);
+  document.getElementById('weekLabel').textContent = 'WK ' + fy.week + ' · ' + fy.fyLabel;
+  document.getElementById('dateStamp').textContent = today.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+
+  // Persistence — restore drafts
+  const FIELDS = ['senderName','up1','up2','up3','dn1','dn2','dn3','f1','f2','f3'];
+  FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    const saved = sessionStorage.getItem('3u3d_' + id);
+    if (saved) el.value = saved;
+    el.addEventListener('input', () => sessionStorage.setItem('3u3d_' + id, el.value));
+    // Auto-resize textareas
+    if (el.tagName === 'TEXTAREA') {
+      const resize = () => { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; };
+      el.addEventListener('input', resize);
+      setTimeout(resize, 0);
+    }
+  });
+
+  function val(id) { return document.getElementById(id).value.trim(); }
+
+  function buildMessage() {
+    const name = val('senderName');
+    const fyInfo = getAUFinancialYearWeek(today);
+    const dateStr = today.toLocaleDateString('en-AU', { day: '2-digit', month: 'short' });
+
+    let m = '*3 Ups / 3 Downs — Week ' + fyInfo.week + ' ' + fyInfo.fyLabel + ' (' + dateStr + ')*';
+    if (name) m += '\nFrom: ' + name;
+    m += '\n\n*THE WEEK THAT WAS*\n';
+    m += '\n↑ Ups\n';
+    m += '1. ' + (val('up1') || '—') + '\n';
+    m += '2. ' + (val('up2') || '—') + '\n';
+    m += '3. ' + (val('up3') || '—') + '\n';
+    m += '\n↓ Downs\n';
+    m += '1. ' + (val('dn1') || '—') + '\n';
+    m += '2. ' + (val('dn2') || '—') + '\n';
+    m += '3. ' + (val('dn3') || '—') + '\n';
+    m += '\n*NEXT WEEK\'S FOCUS*\n';
+    m += '1. ' + (val('f1') || '—') + '\n';
+    m += '2. ' + (val('f2') || '—') + '\n';
+    m += '3. ' + (val('f3') || '—');
+    return m;
+  }
+
+  function buildEmailBody() {
+    // Plain version for email (no markdown asterisks)
+    return buildMessage().replace(/\*/g, '');
+  }
+
+  function buildSubject() {
+    const name = val('senderName');
+    const fyInfo = getAUFinancialYearWeek(today);
+    return '3 Ups / 3 Downs — Week ' + fyInfo.week + ' ' + fyInfo.fyLabel + (name ? ' — ' + name : '');
+  }
+
+  function sendEmail() {
+    const url = 'mailto:bradcuff@kpmg.com.au?subject=' + encodeURIComponent(buildSubject()) + '&body=' + encodeURIComponent(buildEmailBody());
+    window.location.href = url;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function copyText() {
+    const text = buildEmailBody();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard'));
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Copied to clipboard');
+    }
+  }
+</script>
+</body>
+</html>
